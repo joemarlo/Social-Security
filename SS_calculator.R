@@ -1,4 +1,5 @@
 library(tidyverse)
+source("Plots/ggplot_themes.R")
 
 # next steps
 # double check assumptions for projecting indices
@@ -211,16 +212,17 @@ NPV.grid %>%
   scale_fill_brewer(name = "Claim age") +
   scale_y_continuous(breaks = seq(1, 1.1, by = 0.01),
                      labels = scales::percent(0:10/100, 1)) +
+  scale_x_continuous(breaks = seq(65, 100, 5)) +
   labs(title = "Best claim age for maximum lifetime benefits",
        subtitle = "Assuming benefits are invested",
        x = "Longevity (years)",
        y = "Investment return") +
-  theme_minimal() +
-  theme(panel.grid = element_line(color = NA))
+  light.theme +
+  theme(panel.grid.major.y = element_line(color = NA))
 
-ggsave(filename = "Plots/bestClaim.png",
-       plot = last_plot(),
-       device = "png",
-       width = 6,
-       height = 4)
+# ggsave(filename = "Plots/bestClaim.png",
+#        plot = last_plot(),
+#        device = "png",
+#        width = 9,
+#        height = 5)
 
