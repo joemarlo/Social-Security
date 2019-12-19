@@ -77,7 +77,7 @@ indices.df[, c("AWI", "Wage.cap", "First.bend", "Second.bend")] <-
 # add inflation when COLA is NA
 indices.df$COLA[is.na(indices.df$COLA)] <- inflation.rate - 1
 
-# add indexed COLA
+# add column that is an index of the COLA (to ease future calculations involving compounded COLA)
 indices.df$COLA.indexed <- c(1, rep(NA, nrow(indices.df)-1))
 for (i in 2:length(indices.df$COLA)){
     indices.df$COLA.indexed[i] <-
@@ -88,7 +88,13 @@ for (i in 2:length(indices.df$COLA)){
 # function to calculate benefits ----------------------------------------------------------
 
 calculate.benefits <- function(birth.year, claim.age){
-
+  
+  # function calculates the annual Social Security benefits
+  # it returns a data frame with benefits along with the associated
+  #   years and age
+  # the wages used are in the wages.df data frame. These can be modified either within R or
+  #  by adjusting the Wages.csv and reloading the data
+  
   # index the wages ---------------------------------------------------------
 
   # add year, AWI, wage cap
@@ -166,7 +172,6 @@ calculate.benefits <- function(birth.year, claim.age){
 
 # test the function
 calculate.benefits(birth.year = 1953, claim.age = 62)
-
 # View(lapply(62:70, calculate.benefits, birth.year = 1955))
 
 # discount the benefits ---------------------------------------------------
@@ -181,10 +186,10 @@ calculate.benefits(birth.year = 1957, claim.age = 62) %>%
 # claim ages to calculate
 claim.ages <- 62:70 #c(62, 66, 70) 
   
-# create all combinations of investment returns and claim age
+# create all combinations of investment returns, claim age, and death age
 PV.grid <- expand.grid(Return = seq(1, 1.1, by = 0.001),
-                        Claim.age = claim.ages,
-                        Death.age = 63:100) %>% as_tibble()
+                       Claim.age = claim.ages,
+                       Death.age = 63:100) %>% as_tibble()
 
 # calculate NPV for all the combinations
 PV.grid$PV <- pmap(list(PV.grid$Return, PV.grid$Claim.age, PV.grid$Death.age),
