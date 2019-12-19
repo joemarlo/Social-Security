@@ -14,4 +14,9 @@ Project builds a Social Security benefits calculator in R then explores the best
   
 <p align="center">
 <img src="Plots/bestClaim.png" width=79%>
+</p>  
+  
+  
+<p align="center">
+<img src="Plots/bestClaimAll.png" width=79%>
 </p>

@@ -171,55 +171,86 @@ calculate.benefits(birth.year = 1953, claim.age = 62)
 
 # discount the benefits ---------------------------------------------------
 
-# calculate NPV of one series of benefits, starting at age 62
+# calculate present value of one series of benefits, starting at age 62
 calculate.benefits(birth.year = 1957, claim.age = 62) %>%
   filter(Age >= 62) %>%
   pull(Benefits) %>%
-  add.investment.return(., rate = 1.05) %>%
-  NPV(., rate = inflation.rate)
+  add.investment.return(., rate = 1.05) %>% 
+  last(.) / (inflation.rate^(100 - 62))
 
+# claim ages to calculate
+claim.ages <- 62:70 #c(62, 66, 70) 
+  
 # create all combinations of investment returns and claim age
-NPV.grid <- expand.grid(Return = seq(1, 1.1, by = 0.001),
-                        Claim.age = c(62, 66, 70),
+PV.grid <- expand.grid(Return = seq(1, 1.1, by = 0.001),
+                        Claim.age = claim.ages,
                         Death.age = 63:100) %>% as_tibble()
 
 # calculate NPV for all the combinations
-NPV.grid$NPV <- pmap(list(NPV.grid$Return, NPV.grid$Claim.age, NPV.grid$Death.age),
+PV.grid$PV <- pmap(list(PV.grid$Return, PV.grid$Claim.age, PV.grid$Death.age),
                      function(return, age, death){
   
   # calculate benefits
   benefits <- calculate.benefits(birth.year = 1957, claim.age = age)
   benefits <- benefits[benefits$Age >= 62 & benefits$Age <= death,]$Benefits
   
-  # add investment return then calculate NPV
+  # add investment return then calculate present value
   investment.value <- add.investment.return(benefits, return)
-  NPV.value <- NPV(investment.value, inflation.rate)
-  
-  return(NPV.value)
+  present.value <- last(investment.value) / (inflation.rate^(death - 62))
+
+  return(present.value)
 }) %>% unlist()
 
 
-# plot of best claim age by investment return and death age
-NPV.grid %>%
+# plot of best claim age by investment return and death age (claim at 62, FRA, 70)
+# PV.grid %>%
+#   group_by(Return, Death.age) %>%
+#   filter(PV == max(PV)) %>%
+#   ggplot(aes(x = Death.age, y = Return, fill = as.factor(Claim.age))) +
+#   geom_tile() +
+#   scale_fill_brewer(name = "Claim age") +
+#   scale_y_continuous(breaks = seq(1, 1.1, by = 0.01),
+#                      labels = scales::percent(0:10/100, 1)) +
+#   scale_x_continuous(breaks = seq(65, 100, 5)) +
+#   geom_text(x = 71, y = 1.05, label = "Claim at age 62", color = "grey50") +
+#   geom_text(x = 79.5, y = 1.03, label = "FRA", color = "white") +
+#   geom_text(x = 90, y = 1.02, label = "Claim at age 70", color = "white") +
+#   labs(title = "Best age to claim Social Security in order to maximum lifetime benefits",
+#        subtitle = "Based on expected longevity and investment return",
+#        x = "Longevity (years)",
+#        y = "Investment return") +
+#   light.theme +
+#   theme(panel.grid.major.y = element_line(color = NA))
+# 
+# ggsave(filename = "Plots/bestClaim.png",
+#        plot = last_plot(),
+#        device = "png",
+#        width = 9,
+#        height = 5)
+
+# plot of best claim age by investment return and death age (all claim ages)
+PV.grid %>%
   group_by(Return, Death.age) %>%
-  filter(NPV == max(NPV)) %>%
+  filter(PV == max(PV)) %>%
   ggplot(aes(x = Death.age, y = Return, fill = as.factor(Claim.age))) +
   geom_tile() +
   scale_fill_brewer(name = "Claim age") +
   scale_y_continuous(breaks = seq(1, 1.1, by = 0.01),
                      labels = scales::percent(0:10/100, 1)) +
   scale_x_continuous(breaks = seq(65, 100, 5)) +
-  geom_text(x = 80, y = 1.05, label = "Claim at age 62", color = "grey50") +
-  geom_text(x = 93, y = 1.03, label = "FRA", color = "white") +
-  geom_text(x = 97, y = 1.01, label = "70", color = "white") +
-  labs(title = "Best claim age for maximum lifetime benefits",
-       subtitle = "Assuming benefits are invested",
+  geom_text(x = 71, y = 1.06, label = "Claim at age 62", color = "grey50") +
+  geom_text(x = 79.5, y = 1.029, label = "67", color = "white") +
+  geom_text(x = 81.5, y = 1.028, label = "68", color = "white") +
+  geom_text(x = 83.5, y = 1.027, label = "69", color = "white") +
+  geom_text(x = 90, y = 1.02, label = "Claim at age 70", color = "white") +
+  labs(title = "Best age to claim Social Security in order to maximum lifetime benefits",
+       subtitle = "Based on expected longevity and investment return",
        x = "Longevity (years)",
        y = "Investment return") +
   light.theme +
   theme(panel.grid.major.y = element_line(color = NA))
 
-# ggsave(filename = "Plots/bestClaim.png",
+# ggsave(filename = "Plots/bestClaimAll.png",
 #        plot = last_plot(),
 #        device = "png",
 #        width = 9,
