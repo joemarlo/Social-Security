@@ -209,6 +209,9 @@ NPV.grid %>%
   scale_y_continuous(breaks = seq(1, 1.1, by = 0.01),
                      labels = scales::percent(0:10/100, 1)) +
   scale_x_continuous(breaks = seq(65, 100, 5)) +
+  geom_text(x = 80, y = 1.05, label = "Claim at age 62", color = "grey50") +
+  geom_text(x = 93, y = 1.03, label = "FRA", color = "white") +
+  geom_text(x = 97, y = 1.01, label = "70", color = "white") +
   labs(title = "Best claim age for maximum lifetime benefits",
        subtitle = "Assuming benefits are invested",
        x = "Longevity (years)",
