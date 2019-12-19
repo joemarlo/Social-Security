@@ -1,10 +1,6 @@
 library(tidyverse)
 source("Plots/ggplot_themes.R")
 
-# next steps
-# double check assumptions for projecting indices
-# convert benefits calculation from annual to monthly
-
 # read in the wage data
 wages.df <- read_csv("Wages.csv")
 
