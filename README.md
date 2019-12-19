@@ -1,6 +1,6 @@
 # Social-Security
 
-A Social Security benefits calculator that optimizes for claim age based on expected investment return and one's life expectancy (longevity).
+A Social Security benefits calculator that optimizes for claim age based on expected investment return and one's life expectancy (longevity). It answers the question: should I claim early and invest my benefits or wait until age 70 to receive the largest amount? That depends on your investment return and longevity.
 
 
 ## To-do list
