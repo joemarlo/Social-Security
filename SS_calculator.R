@@ -113,5 +113,16 @@ COLA.FRA <- indices.df$COLA.indexed[indices.df$Year == floor(birth.year + FRA)]
 # add in to indexed COLA
 wages.df$Indexed.COLA <- indices.df$COLA.indexed[indices.df$Year %in% wages.df$Year] / COLA.FRA
 
+
+# benefits ----------------------------------------------------------------
+
+benefts.df <- wages.df[, c("Year", "Age")] 
 # calculate SS benefit for every age
-wages.df$benefit <- (wages.df$Age >= claim.age) * (annual.benefit * wages.df$Indexed.COLA)
+benefts.df$benefit <- (benefts.df$Age >= claim.age) * (annual.benefit * wages.df$Indexed.COLA)
+
+# remove unnneed variables
+rm(AIME, AWI.60, claim.age.adj, COLA.FRA, first.bend,
+   second.bend, first.bend.wages, second.bend.wages,
+   highest.35, i, PIA, third.wages, year.62, years.working, add.inf)
+
+
