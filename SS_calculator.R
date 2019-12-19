@@ -216,12 +216,16 @@ PV.grid$PV <- pmap(list(PV.grid$Return, PV.grid$Claim.age, PV.grid$Death.age),
 #   geom_text(x = 79.5, y = 1.03, label = "FRA", color = "white") +
 #   geom_text(x = 90, y = 1.02, label = "Claim at age 70", color = "white") +
 #   labs(title = "Best age to claim Social Security in order to maximum lifetime benefits",
-#        subtitle = "Based on expected longevity and investment return",
+#        subtitle = "Based on expected longevity and investment return (if reinvesting the benefits)",
 #        x = "Longevity (years)",
-#        y = "Investment return") +
+#        y = "Investment return",
+#        caption = "FRA = Full Retirement Age (age ~66)") +
 #   light.theme +
-#   theme(panel.grid.major.y = element_line(color = NA))
-# 
+#   theme(panel.grid.major.y = element_line(color = NA),
+#         plot.caption = element_text(color = "gray30",
+#                                     face = 'italic',
+#                                     size = 7))
+#
 # ggsave(filename = "Plots/bestClaim.png",
 #        plot = last_plot(),
 #        device = "png",
@@ -244,7 +248,7 @@ PV.grid %>%
   geom_text(x = 83.5, y = 1.027, label = "69", color = "white") +
   geom_text(x = 90, y = 1.02, label = "Claim at age 70", color = "white") +
   labs(title = "Best age to claim Social Security in order to maximum lifetime benefits",
-       subtitle = "Based on expected longevity and investment return",
+       subtitle = "Based on expected longevity and investment return (if reinvesting the benefits)",
        x = "Longevity (years)",
        y = "Investment return") +
   light.theme +
