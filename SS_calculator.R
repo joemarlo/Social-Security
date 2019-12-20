@@ -193,17 +193,17 @@ PV.grid <- expand.grid(Return = seq(1, 1.1, by = 0.001),
 
 # calculate NPV for all the combinations
 PV.grid$PV <- pmap(list(PV.grid$Return, PV.grid$Claim.age, PV.grid$Death.age),
-                     function(return, age, death){
+                   function(inv.return, age, death){
   
-  # calculate benefits
-  benefits <- calculate.benefits(birth.year = 1957, claim.age = age)
-  benefits <- benefits[benefits$Age >= 62 & benefits$Age <= death,]$Benefits
-  
-  # add investment return then calculate present value
-  investment.value <- add.investment.return(benefits, return)
-  present.value <- last(investment.value) / (inflation.rate^(death - 62))
+  # calculate benefits then add investment return then calculate present value
+  calculate.benefits(birth.year = 1957, claim.age = age) %>% 
+    filter(Age >= 62,
+           Age <= death) %>% 
+    pull(Benefits) %>% 
+    add.investment.return(., inv.return) %>% 
+    last(.) / (inflation.rate^(death - 62))
 
-  return(present.value)
+  # return(present.value)
 }) %>% unlist()
 
 

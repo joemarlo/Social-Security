@@ -13,10 +13,6 @@ A Social Security benefits calculator that optimizes for claim age based on expe
     
     
   
-<p align="center">
-<img src="Plots/bestClaim.png" width=79%>
-</p>  
-  
   
 <p align="center">
 <img src="Plots/bestClaimAll.png" width=79%>
