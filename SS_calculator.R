@@ -1,5 +1,5 @@
-library(tidyverse)
-source("Plots/ggplot_themes.R")
+require(tidyverse)
+source("Helper_functions.R")
 
 # read in the wage data
 wages.df <- read_csv("Wages.csv")
@@ -21,50 +21,6 @@ indices.df <-
 # set the default inflation rate  
 inflation.rate <- 1.025
 
-
-# helper functions --------------------------------------------------------
-
-add.inf <- function(vec) {
-  # function to fill in NA values with inflation adjusted values
-  # returns a vector containing the original vector's values
-  #  with the NAs filled in
-  
-  # add inflation for values that have a preceding value
-  for (i in seq_along(vec)) {
-    if (all(is.na(vec[i]), !is.na(vec[i-1]), length(!is.na(vec[i-1])) == 1)) {
-      vec[i] <- vec[i - 1] * inflation.rate      
-    }
-  }
-  # remove inflation for values that don't have preceding value
-  for (i in rev(seq_along(vec))){
-    if (is.na(vec[i]) & !is.na(vec[i+1])) {
-      vec[i] <- vec[i + 1] / inflation.rate      
-    }
-  }
-  return(vec)
-}
-
-add.investment.return <- function(vec, rate) {
-  # add investment rate to a series of cashflows
-  # returns a vector of the new investment account balances by period
-  inv <- c()
-  inv[1] <- vec[1]
-  for (i in 2:length(vec)) {
-    inv[i] <- (inv[i - 1] * rate) + vec[i]
-  }
-  return(inv)
-}
-
-NPV <- function(vec, rate){
-  # calculate the net present value of a series of cash flows
-  # returns a single value
-  present.values <- sapply(seq_along(vec), function(i){
-    vec[i] / rate^i
-  })
-  
-  NPV <- sum(c(vec[1], present.values[2:length(present.values)]))
-  return(NPV)
-}
 
 # clean up the indices data.frame -----------------------------------------------------------------
 
@@ -171,97 +127,6 @@ calculate.benefits <- function(birth.year, claim.age){
 }
 
 # test the function
-calculate.benefits(birth.year = 1953, claim.age = 62)
+# calculate.benefits(birth.year = 1953, claim.age = 62)
 # View(lapply(62:70, calculate.benefits, birth.year = 1955))
-
-# discount the benefits ---------------------------------------------------
-
-# calculate present value of one series of benefits, starting at age 62
-calculate.benefits(birth.year = 1957, claim.age = 62) %>%
-  filter(Age >= 62) %>%
-  pull(Benefits) %>%
-  add.investment.return(., rate = 1.05) %>% 
-  last(.) / (inflation.rate^(100 - 62))
-
-# claim ages to calculate
-claim.ages <- 62:70 #c(62, 66, 70) 
-  
-# create all combinations of investment returns, claim age, and death age
-PV.grid <- expand.grid(Return = seq(1, 1.1, by = 0.001),
-                       Claim.age = claim.ages,
-                       Death.age = 63:100) %>% as_tibble()
-
-# calculate NPV for all the combinations
-PV.grid$PV <- pmap(list(PV.grid$Return, PV.grid$Claim.age, PV.grid$Death.age),
-                   function(inv.return, age, death){
-  
-  # calculate benefits then add investment return then calculate present value
-  calculate.benefits(birth.year = 1957, claim.age = age) %>% 
-    filter(Age >= 62,
-           Age <= death) %>% 
-    pull(Benefits) %>% 
-    add.investment.return(., inv.return) %>% 
-    last(.) / (inflation.rate^(death - 62))
-
-  # return(present.value)
-}) %>% unlist()
-
-
-# plot of best claim age by investment return and death age (claim at 62, FRA, 70)
-# PV.grid %>%
-#   group_by(Return, Death.age) %>%
-#   filter(PV == max(PV)) %>%
-#   ggplot(aes(x = Death.age, y = Return, fill = as.factor(Claim.age))) +
-#   geom_tile() +
-#   scale_fill_brewer(name = "Claim age") +
-#   scale_y_continuous(breaks = seq(1, 1.1, by = 0.01),
-#                      labels = scales::percent(0:10/100, 1)) +
-#   scale_x_continuous(breaks = seq(65, 100, 5)) +
-#   geom_text(x = 71, y = 1.05, label = "Claim at age 62", color = "grey50") +
-#   geom_text(x = 79.5, y = 1.03, label = "FRA", color = "white") +
-#   geom_text(x = 90, y = 1.02, label = "Claim at age 70", color = "white") +
-#   labs(title = "Best age to claim Social Security in order to maximum lifetime benefits",
-#        subtitle = "Based on expected longevity and investment return (if reinvesting the benefits)",
-#        x = "Longevity (years)",
-#        y = "Investment return",
-#        caption = "FRA = Full Retirement Age (age ~66)") +
-#   light.theme +
-#   theme(panel.grid.major.y = element_line(color = NA),
-#         plot.caption = element_text(color = "gray30",
-#                                     face = 'italic',
-#                                     size = 7))
-#
-# ggsave(filename = "Plots/bestClaim.png",
-#        plot = last_plot(),
-#        device = "png",
-#        width = 9,
-#        height = 5)
-
-# plot of best claim age by investment return and death age (all claim ages)
-PV.grid %>%
-  group_by(Return, Death.age) %>%
-  filter(PV == max(PV)) %>%
-  ggplot(aes(x = Death.age, y = Return, fill = as.factor(Claim.age))) +
-  geom_tile() +
-  scale_fill_brewer(name = "Claim age") +
-  scale_y_continuous(breaks = seq(1, 1.1, by = 0.01),
-                     labels = scales::percent(0:10/100, 1)) +
-  scale_x_continuous(breaks = seq(65, 100, 5)) +
-  geom_text(x = 71, y = 1.06, label = "Claim at age 62", color = "grey50") +
-  geom_text(x = 79.5, y = 1.029, label = "67", color = "white") +
-  geom_text(x = 81.5, y = 1.028, label = "68", color = "white") +
-  geom_text(x = 83.5, y = 1.027, label = "69", color = "white") +
-  geom_text(x = 90, y = 1.02, label = "Claim at age 70", color = "white") +
-  labs(title = "Best age to claim Social Security in order to maximum lifetime benefits",
-       subtitle = "Based on expected longevity and investment return (if reinvesting the benefits)",
-       x = "Longevity (years)",
-       y = "Investment return") +
-  light.theme +
-  theme(panel.grid.major.y = element_line(color = NA))
-
-# ggsave(filename = "Plots/bestClaimAll.png",
-#        plot = last_plot(),
-#        device = "png",
-#        width = 9,
-#        height = 5)
 
