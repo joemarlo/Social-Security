@@ -138,6 +138,9 @@ Using deterministic investment returns may overestimate final account balances. 
 Let's simulate a single account first. We can use the already calculated `Benefits` data frame and apply investment returns using the `sim.investment.return()` function. Doing these many times we can see how the account balances will vary over time -- some perform well and others poorly.
 
 ```{r}
+# set seed for reproducibility
+set.seed(44)
+
 # set number of simulations, expected return, and expected volatility
 n.sims <- 5000
 exp.return <- 1.05

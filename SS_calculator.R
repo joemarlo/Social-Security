@@ -75,15 +75,16 @@ calculate.benefits <- function(birth.year, claim.age){
   
   # sum the top earning years
   highest.35 <- wages.df %>%
-    filter(Age < 60) %>%
+    filter(Age < claim.age) %>%
     top_n(years.working, wt = Indexed.wages) %>%
     pull(Indexed.wages) %>%
     sum()
   
-  # caclulate the Average Indexed Monthly Earnings
+  # calculate the Average Indexed Monthly Earnings
   AIME <- highest.35 / (years.working * 12)
   
-  # PIA ---------------------------------------------------------------------
+  
+  # Primary Insurance Amount (PIA) -------------------------------------------
   
   year.62 <- birth.year + 62
   first.bend <- indices.df$First.bend[indices.df$Year ==  year.62]
@@ -96,6 +97,7 @@ calculate.benefits <- function(birth.year, claim.age){
   
   # sum to get the PIA
   PIA <- sum(c(first.bend.wages, second.bend.wages, third.wages))
+  
   
   # COLA adjustment ---------------------------------------------------------
   
