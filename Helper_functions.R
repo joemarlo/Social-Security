@@ -39,7 +39,7 @@ sim.investment.return <- function(cashflows, mean, sd) {
   # returns a vector of the new investment account balances by period
   inv <- c()
   inv[1] <- cashflows[1]
-  rates <- rnorm(length(cashflows), mean = mean, sd = sd)
+  rates <- rnorm(length(cashflows)-1, mean = mean, sd = sd)
   for (i in 2:length(cashflows)) {
     inv[i] <- (inv[i - 1] * rates[i-1]) + cashflows[i]
   }
@@ -49,7 +49,6 @@ sim.investment.return <- function(cashflows, mean, sd) {
 grab.percentile.inv.return <- function(cashflows, mean, sd, n.sims, percentile) {
   # simulates investment returns for a series of cashflows
   # returns a single quantile of the ending values
-  
   end.values <- replicate(n.sims,
                           last(
                             sim.investment.return(
@@ -63,7 +62,7 @@ NPV <- function(cashflows, rate){
   # calculate the net present value of a series of cash flows
   # returns a single value
   present.values <- sapply(seq_along(cashflows), function(i){
-    cashflows[i] / rate^i
+    cashflows[i] / rate^(i-1)
   })
   
   NPV <- sum(c(cashflows[1], present.values[2:length(present.values)]))
