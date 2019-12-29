@@ -1,4 +1,5 @@
-require(tidyverse)
+if (!require(tidyverse)) install.packages('tidyverse')
+library(tidyverse)
 source("Helper_functions.R")
 
 # read in the wage data
@@ -27,7 +28,7 @@ inflation.rate <- 1.025
 # apply the inflation function to the AWI, Wage.cap, and bends
 indices.df[, c("AWI", "Wage.cap", "First.bend", "Second.bend")] <-
   apply(X = indices.df[, c("AWI", "Wage.cap", "First.bend", "Second.bend")],
-        MARGIN = 2, FUN = add.inf) %>%
+        MARGIN = 2, FUN = add_inf) %>%
   as_tibble()
 
 # add inflation when COLA is NA
@@ -43,7 +44,7 @@ for (i in 2:length(indices.df$COLA)){
 
 # function to calculate benefits ----------------------------------------------------------
 
-calculate.benefits <- function(birth.year, claim.age){
+calculate_benefits <- function(birth.year, claim.age){
   
   # function calculates the annual Social Security benefits
   # it returns a data frame with benefits along with the associated
@@ -129,6 +130,6 @@ calculate.benefits <- function(birth.year, claim.age){
 }
 
 # test the function
-# calculate.benefits(birth.year = 1953, claim.age = 62)
-# View(lapply(62:70, calculate.benefits, birth.year = 1955))
+# calculate_benefits(birth.year = 1953, claim.age = 62)
+# View(lapply(62:70, calculate_benefits, birth.year = 1955))
 

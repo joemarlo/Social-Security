@@ -1,9 +1,10 @@
-require(tidyverse)
+if (!require(tidyverse)) install.packages('tidyverse')
+library(tidyverse)
 
 
 # helper functions --------------------------------------------------------
 
-add.inf <- function(vec) {
+add_inf <- function(vec) {
   # function to fill in NA values with inflation adjusted values
   # returns a vector containing the original vector's values
   #  with the NAs filled in
@@ -23,7 +24,7 @@ add.inf <- function(vec) {
   return(vec)
 }
 
-add.investment.return <- function(cashflows, rate) {
+add_investment_return <- function(cashflows, rate) {
   # add investment rate to a series of cashflows
   # returns a vector of the new investment account balances by period
   inv <- c()
@@ -34,25 +35,25 @@ add.investment.return <- function(cashflows, rate) {
   return(inv)
 }
 
-sim.investment.return <- function(cashflows, mean, sd) {
+sim_investment_return <- function(cashflows, exp.return, exp.vol) {
   # simulates investment returns for a series of cashflows
   # returns a vector of the new investment account balances by period
   inv <- c()
   inv[1] <- cashflows[1]
-  rates <- rnorm(length(cashflows)-1, mean = mean, sd = sd)
+  rates <- rnorm(length(cashflows)-1, mean = exp.return, sd = exp.vol)
   for (i in 2:length(cashflows)) {
     inv[i] <- (inv[i - 1] * rates[i-1]) + cashflows[i]
   }
   return(inv)
 }
 
-grab.percentile.inv.return <- function(cashflows, mean, sd, n.sims, percentile) {
+grab_percentile_inv_return <- function(cashflows, exp.return, exp.vol, n.sims, percentile) {
   # simulates investment returns for a series of cashflows
   # returns a single quantile of the ending values
   end.values <- replicate(n.sims,
                           last(
-                            sim.investment.return(
-                              cashflows = cashflows, mean = mean, sd = sd
+                            sim_investment_return(
+                              cashflows = cashflows, exp.return = exp.return, exp.vol = exp.vol
                             )))
   qle <- as.numeric(quantile(end.values, probs = percentile))
   return(qle)
