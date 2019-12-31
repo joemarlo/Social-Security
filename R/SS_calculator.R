@@ -1,14 +1,14 @@
 if (!require(tidyverse)) install.packages('tidyverse')
 library(tidyverse)
-source("Helper_functions.R")
+source("R/Helper_functions.R")
 
 # read in the wage data
-wages.df <- read_csv("Wages.csv")
+wages.df <- read_csv("Inputs/Wages.csv")
 
 # read in the indices data
 indices.df <-
   read_csv(
-    "Indices.csv",
+    "Inputs/Indices.csv",
     col_types = cols(
       col_number(),
       COLA = col_double(),

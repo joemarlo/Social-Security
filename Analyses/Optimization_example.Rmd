@@ -9,6 +9,7 @@ editor_options:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = normalizePath(".."))
 ```
 
 
@@ -23,7 +24,7 @@ We'll be using the `optimize()` and `optim()` functions. The most difficult part
 We can wrap the `calculate_benefits()` function from the `SS_calculator.R` script so it outputs a present value and reorder the arguments so claim age is first. Note that the first argument is renamed `par` so it matches with `optim()` arguments.
 
 ```{r message=FALSE, warning=FALSE}
-source("SS_calculator.R")
+source("R/SS_calculator.R")
 source("Plots/ggplot_themes.R")
 
 opt_function <- function(par, birth.year = 1952, inv.return = 1.05, death.age = 100){
