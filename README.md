@@ -2,8 +2,8 @@
 
 A Social Security benefits calculator that optimizes for claim age based on expected investment return and one's life expectancy (longevity). It answers the question: should I claim early and invest my benefits or wait until age 70 to receive the largest amount? That depends on your investment return and longevity.
 
-`Analysis.Rmd` contains the full analysis, plots, and simulations  
-`SS_calculator.R` contains the core logic to calculate Social Security benefits  
+`Analyses` folder contains the full analysis, plots, and simulations  
+`R` folder contains the core logic to calculate Social Security benefits  
 
 ## To-do list
 - [x] Build core of the benefits calculator
