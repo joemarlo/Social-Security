@@ -53,6 +53,14 @@ sapply(62:70, function(claim.age){
   light.theme
 ```
 
+```{r include=FALSE}
+ggsave(filename = "Plots/NPVs.png",
+       plot = last_plot(),
+       device = "png",
+       width = 9,
+       height = 5)
+```
+
 However, we want to know is if one invests their benefits and it yields a certain rate of return then how much is that series of benefits worth. We can treat the accumulation of benefits as an investment account with annual deposits and compounded growth at a given rate. Then we can take the terminal (final) value and discount it back to age 62. This will give us a single value that is an apples-to-apples comparison once we start varying the claim age.
 
 ```{r}
@@ -166,6 +174,14 @@ replicate(n.sims,
        x = "Age",
        y = "Account balance") +
   light.theme
+```
+
+```{r include=FALSE}
+ggsave(filename = "Plots/AccountSim.png",
+       plot = last_plot(),
+       device = "png",
+       width = 9,
+       height = 5)
 ```
 
 Since we are calculating the present value we only care about the final ending value. And we only need one of those `r scales::comma(n.sims)` values to pick for our present value calculation. We can shoot for the middle of the road by choosing the 50th percentile or a more conservative approach would be choosing the 20th percentile — that represents the value where 80% of the other values are greater than it. Let's do three approaches representing conservative, moderate, and aggressive expectations.
