@@ -2,6 +2,8 @@
 
 A Social Security benefits calculator that optimizes for claim age based on expected investment return and one's life expectancy (longevity). It answers the question: should I claim early and invest my benefits or wait until age 70 to receive the largest amount? That depends on your investment return and longevity.
 
+See blog post: [marlo.works/posts/social-security/](https://joemarlo.github.io/posts/social-security)
+
 `Analyses` folder contains the full analysis, plots, and simulations  
 `R` folder contains the core logic to calculate Social Security benefits  
 
@@ -12,9 +14,8 @@ A Social Security benefits calculator that optimizes for claim age based on expe
 - [x] Double check assumptions for projecting indices
 - [x] Check to see if benefits are adjusted correctly for claim age  
     
-    
-  
-  
+<br>
+
 <p align="center">
 <img src="Plots/bestClaimAll.png" width=79%>
 </p>
