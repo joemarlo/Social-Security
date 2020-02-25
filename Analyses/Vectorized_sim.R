@@ -58,7 +58,7 @@ sim.PV %>%
   scale_y_continuous(breaks = seq(1, 1.1, by = 0.01),
                      labels = scales::percent(0:10/100, 1)) +
   scale_x_continuous(breaks = seq(65, 100, 5)) +
-  labs(title = "Best age to claim Social Security to maximum lifetime benefits",
+  labs(title = "Best age to claim Social Security to maximize lifetime benefits",
        subtitle = paste("Based on",
                         scales::comma(n.sims),
                         "simulations per each intersection of return, longevity, and claim age"),

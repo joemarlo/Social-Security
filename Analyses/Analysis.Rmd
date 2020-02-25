@@ -123,7 +123,7 @@ PV.grid %>%
   geom_text(x = 81.5, y = 1.028, label = "68", color = "white") +
   geom_text(x = 83.5, y = 1.027, label = "69", color = "white") +
   geom_text(x = 90, y = 1.02, label = "Claim at age 70", color = "white") +
-  labs(title = "Best age to claim Social Security to maximum lifetime benefits",
+  labs(title = "Best age to claim Social Security to maximize lifetime benefits",
        subtitle = "Based on expected longevity and investment return (if reinvesting the benefits)",
        x = "Expected longevity (years)",
        y = "Expected investment return") +
@@ -233,7 +233,7 @@ PV.grid %>%
   scale_y_continuous(breaks = seq(1, 1.1, by = 0.01),
                      labels = scales::percent(0:10/100, 1)) +
   scale_x_continuous(breaks = seq(65, 100, 5)) +
-  labs(title = "Best age to claim Social Security to maximum lifetime benefits",
+  labs(title = "Best age to claim Social Security to maximize lifetime benefits",
        subtitle = paste("Based on",
                         scales::comma(n.sims),
                         "simulations per each intersection of return, longevity, and claim age"),
